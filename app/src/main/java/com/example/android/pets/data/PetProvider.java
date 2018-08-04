@@ -133,7 +133,46 @@ public class PetProvider extends ContentProvider {
      */
     private Uri insertPet(Uri uri, ContentValues values) {
 
-        // TODO: Insert a new pet into the pets database table with the given ContentValues
+        // To extract out the weight value from the ContentValues object, we use the ContentValues
+        // getAsInteger() method, and pass in the weight as the key for the key / value pair.
+        Integer weight = values.getAsInteger(PetEntry.COLUMN_PET_WEIGHT);
+
+        // If the weight is null, that’s fine, and we can proceed with insertion
+        // (the database will insert default weight 0 automatically).
+        // If the weight is not null AND it’s a negative weight, then we need to throw an exception
+        // with the message “Pet requires valid weight.” We use the “&&” symbol to indicate
+        // that both “weight != null” must be true and “weight < 0” must be true,
+        // in order for the whole test condition to be true, and for the code within
+        // the “if” statement to execute.
+        if (weight != null && weight < 0) {
+            throw new IllegalArgumentException("Pet requires valid weight");
+        }
+
+        // Check that the name is not null
+        String name = values.getAsString(PetEntry.COLUMN_PET_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        // For the sanity check for gender, since it is stored as an integer,
+        // we use the ContentValues getAsInt() method and pass in the gender column key.
+        Integer gender = values.getAsInteger(PetEntry.COLUMN_PET_GENDER);
+
+
+        // If the gender is null or it’s not one of the valid gender values,
+        // then we throw an IllegalArgumentException with the error message “Pet requires valid gender.”
+        // Note that adding the “!” symbol in front of PetEntry.isValidGender(gender)
+        // takes the opposite of that value. If isValidGender() returns true,
+        // then adding the “!” symbol in front of it, will turn that value to false.
+        // If isValidGender() returns false, then adding the “!” symbol in front of it,
+        // will turn that value to true. I also utilized the “||” operator because if either
+        // the gender is null or the gender is invalid, then the “if” check will be true,
+        // and we should throw an exception. This logic is a little tricky so try to isolate
+        // each part of the “if” check, one by one, to make sure you follow along.
+        if (gender == null || !PetEntry.isValidGender(gender)) {
+            throw new IllegalArgumentException("Pet requires valid gender");
+        }
+
         // Get writable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
