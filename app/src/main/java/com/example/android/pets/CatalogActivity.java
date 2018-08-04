@@ -18,22 +18,15 @@ package com.example.android.pets;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import com.example.android.pets.data.PetContract;
 import com.example.android.pets.data.PetContract.PetEntry;
-import com.example.android.pets.data.PetDbHelper;
 
 /**
  * Displays list of pets that were entered and stored in the app.
@@ -87,6 +80,11 @@ public class CatalogActivity extends AppCompatActivity {
 
         // Find the ListView which will be populated with the pet data
         ListView petListView = findViewById(R.id.list);
+
+        // Find and set empty view on the ListView, so that it only shows when the list has
+        // 0 items.
+        View emptyView = findViewById(R.id.empty_view);
+        petListView.setEmptyView(emptyView);
 
         // Setup an Adapter to create a list item for each row of pet data in the Cursor.
         com.example.android.pets.PetCursorAdapter adapter = new com.example.android.pets.PetCursorAdapter(this, cursor);
